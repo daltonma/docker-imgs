@@ -38,7 +38,6 @@ RUN apt-get update && \
 RUN useradd user \
       --create-home \
       --shell=/bin/bash \
-      --groups=docker \
       --uid=1000 \
       --user-group && \
     echo "user ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/nopasswd
