@@ -48,3 +48,14 @@ USER user
 # Install brew
 RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ENV PATH /home/linuxbrew/.linuxbrew/bin:${PATH}
+
+# Install fisher
+# RUN bash -c "source "$(curl -sL https://git.io/fisher)" && fisher install jorgebucaran/fisher -y
+
+# Install anaconda
+
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /home/user/miniconda.sh && \
+    bash /home/user/miniconda.sh -p /home/user/.miniconda3 && \
+    eval "$(/home/user/.miniconda3/bin/conda shell.bash hook)" && \
+    eval "$(/home/user/.miniconda3/bin/conda shell.fish hook)" && \
+    rm -f /home/user/miniconda.sh
