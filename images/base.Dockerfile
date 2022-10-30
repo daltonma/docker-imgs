@@ -62,4 +62,4 @@ RUN ["/bin/bash", "-c", "/home/user/.miniconda3/bin/conda shell.bash hook | eval
 RUN ["fish", "-c", "/home/user/.miniconda3/bin/conda shell.fish hook | eval'"]
 ENV PATH /home/user/.miniconda3/bin:${PATH}
 SHELL ["/bin/bash", "--login -c"]
-CMD ["/bin/bash", "--login"]
+CMD ["/bin/bash"]
