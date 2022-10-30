@@ -56,6 +56,9 @@ ENV PATH /home/linuxbrew/.linuxbrew/bin:${PATH}
 
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /home/user/miniconda.sh && \
     bash /home/user/miniconda.sh -b -p /home/user/.miniconda3 && \
-    eval "$(/home/user/.miniconda3/bin/conda shell.bash hook)" && \
-    eval "$(/home/user/.miniconda3/bin/conda shell.fish hook)" && \
     rm -f /home/user/miniconda.sh
+
+RUN ["/bin/bash", "-c", "/home/user/.miniconda3/bin/conda shell.bash hook | eval"]
+RUN ["fish", "-c", "/home/user/.miniconda3/bin/conda shell.fish hook | eval'"]
+SHELL ["/bin/bash", "--login -c"]
+CMD ["/bin/bash", "--login"]
