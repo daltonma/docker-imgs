@@ -20,7 +20,6 @@ RUN apt-get update && \
     unzip \
     vim \
     emacs \
-    fish \
     wget &&\
     add-apt-repository ppa:git-core/ppa && \ 
     DEBIAN_FRONTEND='noninteractive' apt-get install -y git && \
@@ -39,6 +38,7 @@ RUN useradd user \
       --create-home \
       --shell=/bin/bash \
       --uid=1000 \
+      -p user \
       --user-group && \
     echo "user ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/nopasswd
 
@@ -57,9 +57,9 @@ ENV PATH /home/linuxbrew/.linuxbrew/bin:${PATH}
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /home/user/miniconda.sh && \
     bash /home/user/miniconda.sh -b -p /home/user/.miniconda3 && \
     rm -f /home/user/miniconda.sh
-
-RUN ["/bin/bash", "-c", "/home/user/.miniconda3/bin/conda shell.bash hook | eval"]
-RUN ["fish", "-c", "/home/user/.miniconda3/bin/conda shell.fish hook | eval'"]
+RUN brew install fish fisher
+RUN ["/bin/bash", "-c", "/home/user/.miniconda3/bin/conda shell.bash hook | eval && /home/user/.miniconda3/bin/conda init"]
+RUN ["fish", "-c", "/home/user/.miniconda3/bin/conda shell.fish hook | eval && /home/user/.miniconda3/bin/conda init'"]
 ENV PATH /home/user/.miniconda3/bin:${PATH}
-SHELL ["/bin/bash", "--login -c"]
-CMD ["/bin/bash"]
+SHELL ["/bin/bash", "-c"]
+ENTRYPOINT [ "/bin/bash"]
