@@ -15,6 +15,7 @@ USER root
 RUN mkdir /home/code-server/
 RUN chown user /home/code-server/
 USER user
+ENV HOSTNAME codespace
 ENV PATH /home/user/.local/bin:${PATH}
 EXPOSE 8080
 WORKDIR /home/user/
