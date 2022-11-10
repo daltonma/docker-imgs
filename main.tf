@@ -24,10 +24,7 @@ resource "coder_agent" "main" {
   arch           = data.coder_provisioner.me.arch
   os             = "linux"
   startup_script = <<EOF
-    #!/bin/sh
-    # install and start code-server
-    curl -fsSL https://code-server.dev/install.sh | sh
-    code-server --auth none --port 13337
+    
     EOF
 
   # These environment variables allow you to make Git commits right away after creating a
@@ -46,13 +43,13 @@ resource "coder_app" "code-server" {
   agent_id     = coder_agent.main.id
   slug         = "code-server"
   display_name = "code-server"
-  url          = "http://localhost:13337/?folder=/home/coder"
+  url          = "http://localhost:8080/?folder=/home/coder"
   icon         = "/icon/code.svg"
   subdomain    = false
   share        = "owner"
 
   healthcheck {
-    url       = "http://localhost:13337/healthz"
+    url       = "http://localhost:8080/healthz"
     interval  = 5
     threshold = 6
   }
@@ -112,7 +109,7 @@ resource "docker_container" "workspace" {
     ip   = "host-gateway"
   }
   volumes {
-    container_path = "/home/coder/"
+    container_path = "/home/user/"
     volume_name    = docker_volume.home_volume.name
     read_only      = false
   }
