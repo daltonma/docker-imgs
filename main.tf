@@ -24,7 +24,7 @@ resource "coder_agent" "main" {
   arch           = data.coder_provisioner.me.arch
   os             = "linux"
   startup_script = <<EOF
-    
+    code-server --auth=none --extensions-dir=/home/code-server --bind-addr=0.0.0.0:8080 --disable-getting-started-override --app-name='VS Code'
     EOF
 
   # These environment variables allow you to make Git commits right away after creating a
@@ -43,7 +43,7 @@ resource "coder_app" "code-server" {
   agent_id     = coder_agent.main.id
   slug         = "code-server"
   display_name = "code-server"
-  url          = "http://localhost:8080/?folder=/home/coder"
+  url          = "http://localhost:8080/?folder=/home/userr"
   icon         = "/icon/code.svg"
   subdomain    = false
   share        = "owner"
@@ -52,6 +52,24 @@ resource "coder_app" "code-server" {
     url       = "http://localhost:8080/healthz"
     interval  = 5
     threshold = 6
+  }
+}
+
+variable "docker_image" {
+  description = "What Docker image would you like to use for your workspace?"
+  default     = "code"
+
+  # List of images available for the user to choose from.
+  # Delete this condition to give users free text input.
+  validation {
+    condition     = contains(["base", "code"], var.docker_image)
+    error_message = "Invalid Docker image!"
+  }
+
+  # Prevents admin errors when the image is not found
+  validation {
+    condition     = fileexists("images/${var.docker_image}.Dockerfile")
+    error_message = "Invalid Docker image. The file does not exist in the images directory."
   }
 }
 
@@ -87,11 +105,14 @@ resource "docker_volume" "home_volume" {
 resource "docker_image" "main" {
   name = "coder-${data.coder_workspace.me.id}"
   build {
-    path = "./images"
+    path       = "./images/"
+    dockerfile = "${var.docker_image}.Dockerfile"
+    tag        = ["coder-${var.docker_image}:v0.1"]
   }
   triggers = {
     dir_sha1 = sha1(join("", [for f in fileset(path.module, "images/*") : filesha1(f)]))
   }
+  keep_locally = true
 }
 
 resource "docker_container" "workspace" {
